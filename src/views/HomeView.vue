@@ -140,10 +140,11 @@ const newProject2 = () => {
 }
 
 const submitProject = async () => {
-  const response = await createNewProject(step.value,projectName.value);
-  console.log(response);
-  const id=response.data.projectId;
-  console.log(id);
+  // const response = await createNewProject(step.value,projectName.value);
+  // console.log(response);
+  // const id=response.data.projectId;
+  // console.log(id);
+  const id=1;
   newProjectVisible.value = false;
   if (step.value === 1) {
     url.value = router.resolve({
