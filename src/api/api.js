@@ -18,24 +18,24 @@ export const createNewProject = (step, name) => {
 }
 
 export const generateObject = (winterSolstice, spreadRatio, remoteDistance, buildingInterval, standardArea, maxHeight, maxFloor, firstFloor, standardFloor, objFile, mtlFile, projectId) => {
-    return api.post(`/generateObj`,
-        {
-            "winterSolstice": winterSolstice,
-            "spreadRatio": spreadRatio,
-            "remoteDistance": remoteDistance,
-            "buildingInterval": buildingInterval,
-            "standardArea": standardArea,
-            "maxHeight": maxHeight,
-            "maxFloor": maxFloor,
-            "firstFloor": firstFloor,
-            "standardFloor": standardFloor,
-            "objFile": objFile,
-            "mtlFile": mtlFile,
-            "projectId": projectId,
-        }, {
+    const formData = new FormData();
+    formData.append('winterSolstice', winterSolstice);
+    formData.append('spreadRatio', spreadRatio);
+    formData.append('remoteDistance', remoteDistance);
+    formData.append('buildingInterval', buildingInterval);
+    formData.append('standardArea', standardArea);
+    formData.append('maxHeight', maxHeight);
+    formData.append('maxFloor', maxFloor);
+    formData.append('firstFloor', firstFloor);
+    formData.append('standardFloor', standardFloor);
+
+    formData.append('objFile', objFile);
+    formData.append('mtlFile', mtlFile);
+    formData.append('projectId', projectId);
+
+    return api.post(`/generateObj`, formData, {
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'multipart/form-data'
         }
-    }
-    );
+    });
 }

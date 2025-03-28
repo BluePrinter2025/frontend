@@ -46,7 +46,7 @@
                         </el-row>
                         <el-row style="margin-top:5%;">
                             <el-col :span="12">
-                                <el-text class="mx-1">遥线距离</el-text>
+                                <el-text class="mx-1">退线距离</el-text>
                             </el-col>
                             <el-col :span="12">
                                 <el-input-number v-model="remoteDistance" :precision="2" :step="0.01" :max="10" />
@@ -221,6 +221,7 @@ const ref1 = ref<ButtonInstance>();
 const loader = ref(false);
 const objUrl = ref('');
 const mtlUrl = ref('');
+const sigUrl = ref('')
 const screenshotUrl = ref(null);
 const captureArea = ref(null)
 const confirmPhoto = ref(false);
@@ -333,18 +334,41 @@ const handleExceed = (files, fileList) => {
 
 
 const generateObj = async () => {
-    // const response = await generateObject(winterSolstice.value, spreadRatio.value, remoteDistance.value, buildingInterval.value, standardArea.value, maxHeight.value, maxFloor.value, firstFloor.value, standardFloor.value, objFile.value, mtlFile.value, projectId.value);
-    // generateObjFile.value = response.data.objFile;
-    // generateMtlFile.value = response.data.mtlFile;
-    objUrl.value = '';
-    mtlUrl.value = '';
-    componentKey.value += 1;
-    loader.value = true;
-    setTimeout(() => {
+    try {
+        loader.value = true;
+        
+        // 1. 调用接口生成文件
+        const response = await generateObject(
+            winterSolstice.value,
+            spreadRatio.value,
+            remoteDistance.value,
+            buildingInterval.value,
+            standardArea.value,
+            maxHeight.value,
+            maxFloor.value,
+            firstFloor.value,
+            standardFloor.value,
+            objFile.value,
+            mtlFile.value,
+            projectId.value
+        );
+
+        // 3. 动态加载模型，这两个是包含周边建筑的模型文件
+        objUrl.value = `http://127.0.0.1:5000${response.data.objFile}`; 
+        mtlUrl.value = `http://127.0.0.1:5000/${response.data.mtlFile}`;
+        //TODO 切换到不显示周边建筑：注意这里不加载mtl文件，需要修改前面的vue代码
+        //这个是读取文件：
+        //sigUrl.value = `http://127.0.0.1:5000/${response.data.sigFile}`;
+
+        // 4. 强制重新渲染组件（如果需要）
+        componentKey.value += 1;
+
+    } catch (error) {
+        console.error("生成模型失败:", error);
+    } finally {
         loader.value = false;
-        objUrl.value = '/models/output_file.obj';
-        mtlUrl.value = '/models/material.mtl';
-    }, 2500)
+    }
+
 };
 const complete = () => {
     // try {
