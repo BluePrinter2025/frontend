@@ -1,7 +1,7 @@
 <template>
     <el-container class="all">
         <el-header class="head">
-            <h2>BluePrinter</h2>
+            <h2>ArchSynth</h2>
             <h3>{{ projectName }}</h3>
             <el-icon size="30px">
                 <UserFilled />

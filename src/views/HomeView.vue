@@ -1,13 +1,9 @@
 <template>
   <el-container class="all">
     <el-aside class="aside">
-      <h2 style="margin-left:20px;">BluePrinter</h2>
+      <h2 style="margin-left:20px;margin-top:30px;">ArchSynth</h2>
       <div style="text-align: center;">
-        <button class="custom-button" @click="newProject1">
-          新建步骤一
-        </button>
-        <button class="custom-button button2" @click="newProject2">
-          新建步骤二
+        <button @click="newProject1" class="new-project-button"> 新建项目
         </button>
       </div>
     </el-aside>
@@ -20,35 +16,21 @@
         </el-icon>
       </el-header>
       <el-main class="main">
-        <el-input v-model="searchText" placeholder="Search in all projects..." class="search-input" clearable />
+        <el-input v-model="searchText" placeholder="搜索项目..." class="search-input" clearable />
 
-        <el-table :data="filteredProjects" style="width: 100%"
-          :header-cell-style="{ background: '#f5f7fa', color: '#606266' }">
-          <el-table-column prop="name" label="标题" width="450">
-            <template #default="{ row }">
-              <div class="title-cell">
-                <span class="main-title">{{ row.name }}</span>
-                <span class="sub-id">ID: {{ row.id }}</span>
+        <el-row :gutter="20" class="project-grid">
+          <el-col v-for="(item, index) in filteredProjects" :key="index" :xs="24" :sm="12" :md="8" class="project-col">
+            <el-card class="project-card" shadow="hover" @click="handleCardClick(item)">
+              <el-image :src="item.image" fit="cover" class="card-image" />
+              <div class="card-content">
+                <h3 class="card-title">{{ item.name }}</h3>
+                <div class="card-footer">
+                  <span class="card-time">{{ item.time }}</span>
+                </div>
               </div>
-            </template>
-          </el-table-column>
-
-          <el-table-column prop="author" label="作者" width="300" />
-
-          <el-table-column label="创建时间" width="300">
-            <template #default="{ row }">
-              {{ row.time }}
-            </template>
-          </el-table-column>
-
-          <el-table-column label="Tag" width="173">
-            <template #default="{ row }">
-              <el-tag v-for="(tag, index) in row.tags" :key="index" size="small">
-                {{ tag }}
-              </el-tag>
-            </template>
-          </el-table-column>
-        </el-table>
+            </el-card>
+          </el-col>
+        </el-row>
       </el-main>
     </el-container>
   </el-container>
@@ -57,7 +39,7 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="newProjectVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitProject">
+        <el-button type="primary" @click="submitProject" class="confirm-button">
           确认
         </el-button>
       </div>
@@ -75,9 +57,62 @@ const isLoggin = localStorage.getItem("isLoggin");
 const url = ref('');
 const step = ref(0); //选用第几步骤
 const login = ref(true);
-const projects = ref([]);
+// const projects = ref([]);
 
 const totalProjects = ref(0);
+
+
+const projects = ref([
+  {
+    id: 1,
+    name: '智慧城市设计方案',
+    time: '2024-01-15',
+    image: 'https://picsum.photos/300/200?random=1',
+  },
+  {
+    id: 2,
+    name: '商业综合体方案',
+    time: '2024-02-20',
+    image: 'https://picsum.photos/300/200?random=2',
+  },
+  {
+    id: 3,
+    name: '生态公园规划',
+    time: '2024-03-05',
+    image: 'https://picsum.photos/300/200?random=3',
+  },
+  {
+    id: 4,
+    name: '智能办公楼方案',
+    time: '2024-04-10',
+    image: 'https://picsum.photos/300/200?random=4',
+  },
+  {
+    id: 5,
+    name: '历史建筑改造',
+    time: '2024-05-15',
+    image: 'https://picsum.photos/300/200?random=5',
+  },
+  {
+    id: 6,
+    name: '未来社区规划',
+    time: '2024-06-20',
+    image: 'https://picsum.photos/300/200?random=6',
+  }
+]);
+
+
+const handleCardClick = (item) => {
+  const id = item.id;
+  // url.value = router.resolve({
+  //   path: "/project",
+  //   query: {
+  //     projectName: item.name,
+  //     projectId: id,
+  //   },
+  // });
+  // window.open(url.value.href, "_blank");
+};
 
 const formatTime = (time) => {
   const now = new Date()
@@ -105,21 +140,7 @@ const filteredProjects = computed(() => {
         .normalize('NFD')
         .includes(keyword)
 
-      const authorMatch = (item.author || '')
-        .toLowerCase()
-        .normalize('NFD')
-        .includes(keyword)
-
-
-      const tagsMatch = (item.tags || [])
-        .some(tag =>
-          String(tag)
-            .toLowerCase()
-            .normalize('NFD')
-            .includes(keyword)
-        )
-
-      return nameMatch || authorMatch || tagsMatch
+      return nameMatch
     } catch (e) {
       console.error('项目过滤出错:', e)
       return false
@@ -133,18 +154,12 @@ const newProject1 = () => {
   step.value = 1; //步骤一
 }
 
-const newProject2 = () => {
-  projectName.value = '';
-  newProjectVisible.value = true;
-  step.value = 2; //步骤一
-}
-
 const submitProject = async () => {
   // const response = await createNewProject(step.value,projectName.value);
   // console.log(response);
   // const id=response.data.projectId;
   // console.log(id);
-  const id=1;
+  const id = 1;
   newProjectVisible.value = false;
   if (step.value === 1) {
     url.value = router.resolve({
@@ -176,7 +191,7 @@ onMounted(() => {
   if (isLoggin === 'true') {
     login.value = false;
   }
-  fetchData();
+  // fetchData();
 })
 const fetchData = async () => {
   const response = await getAllProject();
@@ -193,6 +208,72 @@ const fetchData = async () => {
 }
 </script>
 <style scoped>
+.project-grid {
+  margin: -10px;
+}
+
+.project-col {
+  padding: 5px;
+}
+
+.project-card {
+  cursor: pointer;
+  transition: transform 0.2s;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.project-card:hover {
+  transform: translateY(-5px);
+}
+
+.card-image {
+  width: 100%;
+  height: 200px;
+  border-radius: 4px 4px 0 0;
+}
+
+.card-content {
+  padding: 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.card-title {
+  margin: 0 0 10px;
+  font-size: 16px;
+  color: #303133;
+  flex: 1;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: auto;
+  text-align: center;
+}
+
+.card-time {
+  font-size: 12px;
+  color: #909399;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .project-col {
+    width: 100%;
+  }
+
+  .card-image {
+    height: 150px;
+  }
+}
+
 /* 新增样式 */
 .project-item {
   border: 1px solid #ebeef5;
@@ -302,37 +383,39 @@ const fetchData = async () => {
   border-radius: 40px 0 0 0;
 }
 
-/* 新建按钮 */
-.custom-button {
-  background-color: #5bb0ff;
-  color: white;
+.confirm-button {
+  background-color: #cbf1f5;
   border: none;
-  width: 85%;
-  font-weight: bold;
-  padding: 12px 24px;
-  border-radius: 24px;
-  font-size: 18px;
+  color: #000;
+}
+
+.new-project-button {
+  width: 80%;
+  margin-top: 7%;
+  background-color: #cbf1f5;
+  padding: 1.3em 3em;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  color: #000;
+  /* background-color: #fff; */
+  border: none;
+  border-radius: 45px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease 0s;
   cursor: pointer;
-  transition: background-color 0.3s;
-  margin-top: 4%;
+  outline: none;
 }
 
-.custom-button:hover {
-  background-color: #2877c1;
+.new-project-button:hover {
+  background-color: #71c9ce;
+  box-shadow: 0px 15px 20px #a6e3e9;
+  color: #fff;
+  transform: translateY(-7px);
 }
 
-.button-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 50px;
-}
-
-.button2 {
-  background-color: #62e744;
-  margin-top: 4%;
-}
-
-.button2:hover {
-  background-color: #61cd2a;
+.new-project-button:active {
+  transform: translateY(-1px);
 }
 </style>

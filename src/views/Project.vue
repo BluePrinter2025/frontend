@@ -1,7 +1,7 @@
 <template>
     <el-container class="all">
         <el-header class="head">
-            <h2>BluePrinter</h2>
+            <h2>ArchSynth</h2>
             <h3>{{ projectName }}</h3>
             <el-icon size="30px">
                 <UserFilled />
@@ -10,7 +10,7 @@
         <el-container class="bottom">
             <el-aside class="side">
                 <el-card class="firstStep">
-                    <el-scrollbar height="670px" style="width:102%;">
+                    <el-scrollbar height="700px" style="width:102%;">
                         <el-row>
                             <el-col :span="24">
                                 <el-upload v-model:file-list="fileList" class="upload-demo" drag multiple :limit="2"
@@ -33,74 +33,88 @@
                                 <el-text class="mx-1">冬至日 日照时长</el-text>
                             </el-col>
                             <el-col :span="12">
-                                <el-input-number v-model="winterSolstice" :precision="2" :step="0.01" :max="10" />
+                                <a-input-number v-model:value="winterSolstice" addon-after="h" :min="0" :max="24" />
                             </el-col>
                         </el-row>
-                        <el-row style="margin-top:5%;">
+                        <el-row style="margin-top:4%;">
                             <el-col :span="12">
                                 <el-text class="mx-1">间距系数</el-text>
                             </el-col>
                             <el-col :span="12">
-                                <el-input-number v-model="spreadRatio" :precision="2" :step="0.01" :max="10" />
+                                <a-input-number v-model:value="spreadRatio" :min="0" :max="50" style="width:100%;" />
                             </el-col>
                         </el-row>
-                        <el-row style="margin-top:5%;">
+                        <el-row style="margin-top:4%;">
                             <el-col :span="12">
-                                <el-text class="mx-1">遥线距离</el-text>
+                                <el-text class="mx-1">退线距离</el-text>
                             </el-col>
                             <el-col :span="12">
-                                <el-input-number v-model="remoteDistance" :precision="2" :step="0.01" :max="10" />
+                                <a-input-number v-model:value="remoteDistance" :min="0" style="width:100%;"
+                                    addon-after="m" />
                             </el-col>
                         </el-row>
-                        <el-row style="margin-top:5%;">
+                        <el-row style="margin-top:4%;">
                             <el-col :span="12">
                                 <el-text class="mx-1">建筑间距</el-text>
                             </el-col>
                             <el-col :span="12">
-                                <el-input-number v-model="buildingInterval" :precision="2" :step="0.01" :max="10" />
+                                <a-input-number v-model:value="buildingInterval" :min="0" style="width:100%;"
+                                    addon-after="m" />
                             </el-col>
                         </el-row>
-                        <el-row style="margin-top:5%;">
+                        <el-row style="margin-top:4%;">
                             <el-col :span="12">
                                 <el-text class="mx-1">单体标准层面积</el-text>
                             </el-col>
                             <el-col :span="12">
-                                <el-input-number v-model="standardArea" :precision="2" :step="0.01" :max="10" />
+                                <a-input-number v-model:value="standardArea" :min="0" style="width:100%;"
+                                    addon-after="m²" />
                             </el-col>
                         </el-row>
-                        <el-row style="margin-top:5%;">
+                        <el-row style="margin-top:4%;">
                             <el-col :span="12">
                                 <el-text class="mx-1">最高高度</el-text>
                             </el-col>
                             <el-col :span="12">
-                                <el-input-number v-model="maxHeight" :precision="2" :step="0.01" :max="10" />
+                                <a-input-number v-model:value="maxHeight" :min="0" style="width:100%;"
+                                    addon-after="m" />
                             </el-col>
                         </el-row>
-                        <el-row style="margin-top:5%;">
+                        <el-row style="margin-top:4%;">
                             <el-col :span="12">
                                 <el-text class="mx-1">最高层数</el-text>
                             </el-col>
                             <el-col :span="12">
-                                <el-input-number v-model="maxFloor" :precision="2" :step="0.01" :max="10" />
+                                <a-input-number v-model:value="maxFloor" :min="0" :max="10" style="width:100%;" />
                             </el-col>
                         </el-row>
-                        <el-row style="margin-top:5%;">
+                        <el-row style="margin-top:4%;">
                             <el-col :span="12">
                                 <el-text class="mx-1">首层层高</el-text>
                             </el-col>
                             <el-col :span="12">
-                                <el-input-number v-model="firstFloor" :precision="2" :step="0.01" :max="10" />
+                                <a-input-number v-model:value="firstFloor" :min="0" style="width:100%;"
+                                    addon-after="m" />
                             </el-col>
                         </el-row>
-                        <el-row style="margin-top:5%;">
+                        <el-row style="margin-top:4%;">
                             <el-col :span="12">
                                 <el-text class="mx-1">标准层高</el-text>
                             </el-col>
                             <el-col :span="12">
-                                <el-input-number v-model="standardFloor" :precision="2" :step="0.01" :max="10" />
+                                <a-input-number v-model:value="standardFloor" :min="0" style="width:100%;"
+                                    addon-after="m" />
                             </el-col>
                         </el-row>
-                        <el-row style="margin-top:7%;">
+                        <el-row style="margin-top:4%;">
+                            <el-col :span="12">
+                                <el-text class="mx-1">比例尺</el-text>
+                            </el-col>
+                            <el-col :span="12">
+                                <a-input-number v-model:value="measuringScale" :min="0" style="width:100%;" />
+                            </el-col>
+                        </el-row>
+                        <el-row style="margin-top:4%;">
                             <el-col :span="14">
 
                             </el-col>
@@ -139,8 +153,11 @@
                 </el-col>
                 <el-col v-else>
                     <el-row>
-                        <el-text size="large" v-if="objUrl && mtlUrl" style=" margin-top: 1.3%;position: absolute;"
+                        <el-text size="large" v-if="containRate" style=" margin-top: 1.3%;position: absolute;"
                             class="containtext">容积率:2.8</el-text>
+                    </el-row>
+                    <el-row>
+                        <el-button type="warning" @click="continueToRender" class="renderButton" plain>继续渲染</el-button>
                     </el-row>
                     <el-row>
                         <el-button type="success" plain @click="complete" class="outputButton">导出</el-button>
@@ -162,7 +179,6 @@
         <template #footer>
             <div class="dialog-footer">
                 <el-button @click="returnHome">返回主页</el-button>
-                <el-button type="warning" @click="continueToRender">继续渲染</el-button>
                 <el-button type="primary" @click="dialogVisible = false">
                     继续编辑
                 </el-button>
@@ -174,7 +190,7 @@
         </el-tour-step>
         <el-tour-step :target="ref1?.$el" description="调整好角度后，点击按钮即可进入渲染界面" />
     </el-tour>
-    <el-dialog v-model="confirmPhoto" title="请确认截图" width="500">
+    <!-- <el-dialog v-model="confirmPhoto" title="请确认截图" width="500">
         <img :src="screenshotUrl" alt="模型截图" class="preview-image">
         <template #footer>
             <div class="dialog-footer">
@@ -184,7 +200,7 @@
                 </el-button>
             </div>
         </template>
-    </el-dialog>
+    </el-dialog> -->
 </template>
 <script lang="ts" setup>
 import { ref, onMounted, watch, onUnmounted, nextTick } from 'vue';
@@ -228,6 +244,8 @@ const url = ref('');
 const lights = ref();
 const componentKey = ref(0);
 const threeScene = ref(null);
+const containRate = ref(false);
+const measuringScale = ref(0);
 lights.value = [
     {
         type: "AmbientLight",
@@ -285,7 +303,19 @@ const screenShot = async () => {
         }
         const dataURL = canvas.toDataURL('image/png');
         screenshotUrl.value = dataURL;
-        confirmPhoto.value = true;
+        // confirmPhoto.value = true;
+        localStorage.setItem('screenshotData', screenshotUrl.value);
+        const routeData = router.resolve({
+            path: "/render",
+            query: {
+                projectId: projectId.value,
+                projectName: projectName.value,
+                step: 1,
+            },
+        });
+
+        // 使用 router.push 进行跳转
+        router.push(routeData.href);
     });
 };
 
@@ -344,6 +374,7 @@ const generateObj = async () => {
         loader.value = false;
         objUrl.value = '/models/output_file.obj';
         mtlUrl.value = '/models/material.mtl';
+        containRate.value = true;
     }, 2500)
 };
 const complete = () => {
@@ -463,6 +494,16 @@ onMounted(() => {
     left: 0;
 }
 
+.renderButton {
+    margin-top: 1.3%;
+    margin-right: 19%;
+    width: 8%;
+    font-size: 15px;
+    font-weight: bold;
+    position: absolute;
+    right: 0;
+}
+
 .outputButton {
     margin-top: 1.3%;
     margin-right: 10%;
@@ -492,7 +533,7 @@ onMounted(() => {
 
 .firstStep {
     margin-top: 2%;
-    width: 90%;
+    width: 92%;
     height: 98%;
     margin-left: 5%;
     border-radius: 10px;
