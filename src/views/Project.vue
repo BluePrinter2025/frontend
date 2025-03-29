@@ -128,11 +128,11 @@
             </el-aside>
             <el-main class="main">
                 <div>
-                    
+
                 </div>
                 <!-- obj预览 -->
                 <div style="width: 100%;height: calc(100% - 40px);" ref="captureArea">
-                    <vue3dLoader v-if="objUrl && mtlUrl" :filePath="objUrl" :mtlPath="mtlUrl" class="scene-container"
+                    <vue3dLoader v-if="objShow" :filePath="objUrl" :mtlPath="mtlUrl" class="scene-container"
                         :crossOrigin="'anonymous'" id="btn1" :lights="lights" :key="componentKey" ref="threeScene"
                         :renderer-options="{ preserveDrawingBuffer: true }" @init="onSceneInit" />
                     <div v-if="loader"
@@ -157,7 +157,7 @@
                 <el-col v-else>
                     <el-row>
                         <el-text size="large" v-if="containRate" style=" margin-top: 1.3%;position: absolute;"
-                            class="containtext">容积率:2.8</el-text>
+                            class="containtext">容积率:{{ plotRatio }}</el-text>
                     </el-row>
                     <el-row>
                         <el-button type="warning" @click="continueToRender" class="renderButton" plain>继续渲染</el-button>
@@ -249,6 +249,8 @@ const componentKey = ref(0);
 const threeScene = ref(null);
 const containRate = ref(false);
 const measuringScale = ref(0);
+const plotRatio=ref(0);
+const objShow=ref(false);
 lights.value = [
     {
         type: "AmbientLight",
@@ -335,6 +337,7 @@ const handleFileChange = async (file: UploadUserFile, files: UploadUserFile[]) =
     if (objCount === 1 && mtlCount === 1) {
         objFile.value = files.find(f => f.name.endsWith('.obj'));
         mtlFile.value = files.find(f => f.name.endsWith('.mtl'));
+        objShow.value=true;
         try {
             try {
 
