@@ -127,6 +127,9 @@
                 </el-card>
             </el-aside>
             <el-main class="main">
+                <div>
+                    
+                </div>
                 <!-- obj预览 -->
                 <div style="width: 100%;height: calc(100% - 40px);" ref="captureArea">
                     <vue3dLoader v-if="objUrl && mtlUrl" :filePath="objUrl" :mtlPath="mtlUrl" class="scene-container"
