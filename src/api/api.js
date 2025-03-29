@@ -17,7 +17,7 @@ export const createNewProject = (step, name) => {
     );
 }
 
-export const generateObject = (winterSolstice, spreadRatio, remoteDistance, buildingInterval, standardArea, maxHeight, maxFloor, firstFloor, standardFloor, objFile, mtlFile, projectId) => {
+export const generateObject = (winterSolstice, spreadRatio, remoteDistance, buildingInterval, standardArea, maxHeight, maxFloor, firstFloor, standardFloor, objFile, mtlFile, projectId,measuringScale) => {
     return api.post(`/generateObj`,
         {
             "winterSolstice": winterSolstice,
@@ -32,6 +32,7 @@ export const generateObject = (winterSolstice, spreadRatio, remoteDistance, buil
             "objFile": objFile,
             "mtlFile": mtlFile,
             "projectId": projectId,
+            "measuringScale": measuringScale,
         }, {
         headers: {
             'Content-Type': 'application/json'
