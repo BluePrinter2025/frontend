@@ -173,7 +173,7 @@
                             class="containtext">容积率:{{ plotRatio }}</el-text>
                     </el-row>
                     <el-row>
-                        <el-button type="warning" @click="continueToRender" class="renderButton" plain>继续渲染</el-button>
+                        <el-button type="warning" @click="continueToRender" class="renderButton" plain>渲染</el-button>
                     </el-row>
                     <el-row>
                         <el-button type="success" plain @click="complete" class="outputButton">导出</el-button>
