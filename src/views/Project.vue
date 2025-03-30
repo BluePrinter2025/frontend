@@ -127,14 +127,27 @@
                 </el-card>
             </el-aside>
             <el-main class="main">
-                <div>
-
-                </div>
                 <!-- obj预览 -->
                 <div style="width: 100%;height: calc(100% - 40px);" ref="captureArea">
-                    <vue3dLoader v-if="objShow" :filePath="objUrl" :mtlPath="mtlUrl" class="scene-container"
-                        :crossOrigin="'anonymous'" id="btn1" :lights="lights" :key="componentKey" ref="threeScene"
-                        :renderer-options="{ preserveDrawingBuffer: true }" @init="onSceneInit" />
+                    <vue3dLoader v-if="objShow && objUrl && mtlUrl" :filePath="objUrl" :mtlPath="mtlUrl"
+                        class="scene-container" :crossOrigin="'anonymous'" id="btn1" :lights="lights"
+                        :key="componentKey" ref="threeScene" :renderer-options="{ preserveDrawingBuffer: true }"
+                        @init="onSceneInit" />
+                    <div style="width: 100%;height: calc(100% - 40px);" v-if="tabsShow">
+                        <a-tabs v-model:activeKey="activeKey">
+                            <a-tab-pane key="1" tab="完整视图">
+                                <vue3dLoader :filePath="objUrl" :mtlPath="mtlUrl" class="scene-container"
+                                    :crossOrigin="'anonymous'" id="btn1" :lights="lights" :key="componentKey"
+                                    ref="threeScene" :renderer-options="{ preserveDrawingBuffer: true }"
+                                    @init="onSceneInit" />
+                            </a-tab-pane>
+                            <a-tab-pane key="2" tab="仅生成" force-render>
+                                <vue3dLoader :filePath="objUrl" class="scene-container" :crossOrigin="'anonymous'"
+                                    id="btn1" :lights="lights" :key="componentKey" ref="threeScene"
+                                    :renderer-options="{ preserveDrawingBuffer: true }" @init="onSceneInit" />
+                            </a-tab-pane>
+                        </a-tabs>
+                    </div>
                     <div v-if="loader"
                         style="width:100%;height:100%;display: flex;justify-content: center;align-items: center;">
                         <svg class="pl" width="240" height="240" viewBox="0 0 240 240">
@@ -213,10 +226,10 @@ import { UploadFilled } from '@element-plus/icons-vue'
 // import type { UploadProps, UploadUserFile } from 'element-plus'
 import { ElMessage } from "element-plus";
 import { generateObject } from '../api/api';
-import { ElMessageBox } from 'element-plus';
+import { ElMessageBox, UploadUserFile } from 'element-plus';
 import type { ButtonInstance } from 'element-plus';
 const dialogVisible = ref(false)
-const fileList = ref([]);
+const fileList = ref<UploadUserFile[]>([]);
 const router = useRouter();
 const projectName = ref(null);
 const projectId = ref(0);
@@ -232,8 +245,6 @@ const firstFloor = ref(0);
 const standardFloor = ref(0);
 const objFile = ref(null);
 const mtlFile = ref(null);
-const generateObjFile = ref(null);
-const generateMtlFile = ref(null);
 const render = ref(false);
 const open = ref(false);
 const ref1 = ref<ButtonInstance>();
@@ -249,8 +260,11 @@ const componentKey = ref(0);
 const threeScene = ref(null);
 const containRate = ref(false);
 const measuringScale = ref(0);
-const plotRatio=ref(0);
-const objShow=ref(false);
+const plotRatio = ref(0);
+const objShow = ref(false);
+const sigUrl = ref(null);
+const activeKey = ref(1);
+const tabsShow = ref(false);
 lights.value = [
     {
         type: "AmbientLight",
@@ -336,8 +350,8 @@ const handleFileChange = async (file: UploadUserFile, files: UploadUserFile[]) =
 
     if (objCount === 1 && mtlCount === 1) {
         objFile.value = files.find(f => f.name.endsWith('.obj'));
+        // console.log(objFile.value.raw);
         mtlFile.value = files.find(f => f.name.endsWith('.mtl'));
-        objShow.value=true;
         try {
             try {
 
@@ -345,11 +359,16 @@ const handleFileChange = async (file: UploadUserFile, files: UploadUserFile[]) =
                 loader.value = true;
                 setTimeout(() => {
                     loader.value = false;
-                    objUrl.value = '/models/测试_清理版.obj';
-                    mtlUrl.value = '/models/测试_清理版.mtl';
+                    // objUrl.value = '/models/测试_清理版.obj';
+                    // mtlUrl.value = '/models/测试_清理版.mtl';
+                    objUrl.value = URL.createObjectURL(objFile.value.raw);
+                    objUrl.value = objUrl.value.slice(5);
+                    mtlUrl.value = URL.createObjectURL(mtlFile.value.raw);
+                    mtlUrl.value = mtlUrl.value.slice(5);
+                    objShow.value = true;
                 }, 1500);
 
-                // componentKey.value += 1;
+                componentKey.value += 1;
 
             } catch (error) {
                 console.error('模型加载失败:', error);
@@ -367,6 +386,8 @@ const handleExceed = (files, fileList) => {
 
 
 const generateObj = async () => {
+    objShow.value = false;
+    loader.value = true;
     const response = await generateObject(
         winterSolstice.value,
         spreadRatio.value,
@@ -386,22 +407,16 @@ const generateObj = async () => {
     // 3. 动态加载模型，这两个是包含周边建筑的模型文件
     objUrl.value = `http://127.0.0.1:5000${response.data.objFile}`;
     mtlUrl.value = `http://127.0.0.1:5000/${response.data.mtlFile}`;
+    tabsShow.value = true;
+    loader.value = false;
+    plotRatio.value = response.data.plotRatio;
+    containRate.value = true;
     //TODO 切换到不显示周边建筑：注意这里不加载mtl文件，需要修改前面的vue代码
     //这个是读取文件：
-    //sigUrl.value = `http://127.0.0.1:5000/${response.data.sigFile}`;
+    sigUrl.value = `http://127.0.0.1:5000/${response.data.sigFile}`;
 
     // 4. 强制重新渲染组件（如果需要）
     componentKey.value += 1;
-    objUrl.value = '';
-    mtlUrl.value = '';
-    componentKey.value += 1;
-    loader.value = true;
-    setTimeout(() => {
-        loader.value = false;
-        objUrl.value = '/models/output_file.obj';
-        mtlUrl.value = '/models/material.mtl';
-        containRate.value = true;
-    }, 2500)
 };
 const complete = () => {
     // try {
@@ -432,7 +447,7 @@ const complete = () => {
     //     console.error('文件下载失败:', error)
     //     ElMessage.error('文件下载失败')
     // }
-    const urlList = ['/models/material.mtl', '/models/material.mtl'];
+    const urlList = [objUrl.value, mtlUrl.value];
     setTimeout(() => downloadFile(urlList[0], 'output_file.obj'), 100);
     setTimeout(() => downloadFile(urlList[1], 'material.mtl'), 100);
 };
