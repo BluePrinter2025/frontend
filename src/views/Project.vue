@@ -372,11 +372,13 @@ const handleFileChange = async (file: UploadUserFile, files: UploadUserFile[]) =
                     objFile.value.raw,
                     mtlFile.value.raw,
                 );
-                objUrl.value = `http://127.0.0.1:5000${response.data.objFile}`;
-                mtlUrl.value = `http://127.0.0.1:5000/${response.data.mtlFile}`;
+                objUrl.value = `http://127.0.0.1:5000/${response.data.objUrl}`;
+                mtlUrl.value = `http://127.0.0.1:5000/${response.data.mtlUrl}`;
                 objShow.value = true;
-
                 componentKey.value += 1;
+                console.log("objUrl:",objUrl.value)
+                console.log("mtlUrl:",mtlUrl.value)
+
 
             } catch (error) {
                 console.error('模型加载失败:', error);
@@ -415,7 +417,7 @@ const generateObj = async () => {
     );
 
     // 3. 动态加载模型，这两个是包含周边建筑的模型文件
-    genObjUrl.value = `http://127.0.0.1:5000${response.data.objFile}`;
+    genObjUrl.value = `http://127.0.0.1:5000/${response.data.objFile}`;
     genMtlUrl.value = `http://127.0.0.1:5000/${response.data.mtlFile}`;
     objUrl.value = genObjUrl.value;
     mtlUrl.value = genMtlUrl.value;
