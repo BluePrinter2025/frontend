@@ -83,6 +83,7 @@ import { UploadFilled } from '@element-plus/icons-vue'
 import type { UploadProps, UploadUserFile } from 'element-plus'
 import { ElMessage } from "element-plus";
 import { ElNotification } from 'element-plus'
+import { step2 } from '../api/api';
 const router = useRouter();
 const projectName = ref(null);
 const projectId = ref(0);
@@ -101,12 +102,15 @@ onMounted(() => {
         console.log("url" + screenShotUrl.value);
     }
 });
-const letsRender = () => {
+const letsRender = async () => {
     loader.value = true;
-    setTimeout(() => {
-        loader.value = false;
-        isImage.value = true;
-    }, 2500)
+    const response = await step2(
+        textarea.value,
+        screenShotUrl.value,
+    );
+    images.value = response.data.image_urls;
+    loader.value = false;
+    isImage.value = true;
 };
 const images = ref([
     '/pictures/test.jpg',

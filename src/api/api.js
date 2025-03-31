@@ -1,4 +1,5 @@
 import api from './request';
+import step2_api from './request2';
 
 export const getAllProject = () => {
     return api.get('/allProject');
@@ -41,11 +42,11 @@ export const generateObject = (winterSolstice, spreadRatio, remoteDistance, buil
     });
 }
 
-export const getPreview = (objFile, mtlFile) => {
+export const step2 = (text, image) => {
     const formData = new FormData();
-    formData.append('objFile', objFile);
-    formData.append('mtlFile', mtlFile);
-    return api.post(`/getPreview`, formData, {
+    formData.append('text', text);
+    formData.append('image', image);
+    return step2_api.post(`/generateStyle`, formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }
