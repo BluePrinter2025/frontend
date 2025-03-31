@@ -40,3 +40,14 @@ export const generateObject = (winterSolstice, spreadRatio, remoteDistance, buil
         }
     });
 }
+
+export const getPreview = (objFile, mtlFile) => {
+    const formData = new FormData();
+    formData.append('objFile', objFile);
+    formData.append('mtlFile', mtlFile);
+    return api.post(`/generateObj`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+}

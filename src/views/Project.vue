@@ -10,7 +10,7 @@
         <el-container class="bottom">
             <el-aside class="side">
                 <el-card class="firstStep">
-                    <el-scrollbar height="700px" style="width:102%;">
+                    <el-scrollbar height="687px" style="width:102%;">
                         <el-row>
                             <el-col :span="24">
                                 <el-upload v-model:file-list="fileList" class="upload-demo" drag multiple :limit="2"
@@ -129,26 +129,13 @@
             <el-main class="main">
                 <!-- obj预览 -->
                 <div style="width: 100%;height: calc(100% - 40px);" ref="captureArea">
-                    <vue3dLoader v-if="objShow && objUrl && mtlUrl" :filePath="objUrl" :mtlPath="mtlUrl"
-                        class="scene-container" :crossOrigin="'anonymous'" id="btn1" :lights="lights"
-                        :key="componentKey" ref="threeScene" :renderer-options="{ preserveDrawingBuffer: true }"
-                        @init="onSceneInit" />
-                    <div style="width: 100%;height: calc(100% - 40px);" v-if="tabsShow">
-                        <a-tabs v-model:activeKey="activeKey">
-                            <a-tab-pane key="1" tab="完整视图">
-                                <vue3dLoader :filePath="objUrl" :mtlPath="mtlUrl" class="scene-container"
-                                    :crossOrigin="'anonymous'" id="btn1" :lights="lights" :key="componentKey"
-                                    ref="threeScene" :renderer-options="{ preserveDrawingBuffer: true }"
-                                    @init="onSceneInit" />
-                            </a-tab-pane>
-                            <a-tab-pane key="2" tab="仅生成" force-render>
-                                <vue3dLoader :filePath="objUrl" class="scene-container" :crossOrigin="'anonymous'"
-                                    id="btn1" :lights="lights" :key="componentKey" ref="threeScene"
-                                    :renderer-options="{ preserveDrawingBuffer: true }" @init="onSceneInit" />
-                            </a-tab-pane>
-                        </a-tabs>
-                    </div>
-                    <div v-if="loader"
+                    <el-button type="info" plain style="margin-top:-10px;margin-bottom:5px;" @click="exchange">{{
+                button_text
+            }}</el-button>
+                    <vue3dLoader v-show="objShow" :filePath="objUrl" :mtlPath="mtlUrl" class="scene-container"
+                        :crossOrigin="'anonymous'" id="btn1" :lights="lights" :key="componentKey" ref="threeScene"
+                        :renderer-options="{ preserveDrawingBuffer: true }" @init="onSceneInit" />
+                    <div v-show="loader"
                         style="width:100%;height:100%;display: flex;justify-content: center;align-items: center;">
                         <svg class="pl" width="240" height="240" viewBox="0 0 240 240">
                             <circle class="pl__ring pl__ring--a" cx="120" cy="120" r="105" fill="none" stroke="#000"
@@ -225,15 +212,14 @@ import { useRouter } from "vue-router";
 import { UploadFilled } from '@element-plus/icons-vue'
 // import type { UploadProps, UploadUserFile } from 'element-plus'
 import { ElMessage } from "element-plus";
-import { generateObject } from '../api/api';
+import { generateObject, getPreview } from '../api/api';
 import { ElMessageBox, UploadUserFile } from 'element-plus';
 import type { ButtonInstance } from 'element-plus';
 const dialogVisible = ref(false)
 const fileList = ref<UploadUserFile[]>([]);
 const router = useRouter();
 const projectName = ref(null);
-const projectId = ref(0);
-const file = ref(null);
+const projectId = ref('');
 const winterSolstice = ref(0);  //冬至日
 const spreadRatio = ref(0);    //间距系数
 const remoteDistance = ref(0);
@@ -254,7 +240,6 @@ const mtlUrl = ref('');
 const screenshotUrl = ref(null);
 const captureArea = ref(null)
 const confirmPhoto = ref(false);
-const url = ref('');
 const lights = ref();
 const componentKey = ref(0);
 const threeScene = ref(null);
@@ -263,8 +248,21 @@ const measuringScale = ref(0);
 const plotRatio = ref(0);
 const objShow = ref(false);
 const sigUrl = ref(null);
-const activeKey = ref(1);
-const tabsShow = ref(false);
+const isSig = ref(false);
+const genObjUrl = ref('');
+const genMtlUrl = ref('');
+const genSigUrl = ref('');
+const button_text = ref('仅显示生成部分');
+const exchange = () => {
+    if (button_text.value === '仅显示生成部分') {
+        button_text.value = '显示全部';
+        objUrl.value = genSigUrl.value;
+    } else {
+        button_text.value = '仅显示生成部分';
+        objUrl.value = genObjUrl.value;
+        mtlUrl.value = genMtlUrl.value;
+    }
+};
 lights.value = [
     {
         type: "AmbientLight",
@@ -356,17 +354,13 @@ const handleFileChange = async (file: UploadUserFile, files: UploadUserFile[]) =
             try {
 
 
-                loader.value = true;
-                setTimeout(() => {
-                    loader.value = false;
-                    // objUrl.value = '/models/测试_清理版.obj';
-                    // mtlUrl.value = '/models/测试_清理版.mtl';
-                    objUrl.value = URL.createObjectURL(objFile.value.raw);
-                    objUrl.value = objUrl.value.slice(5);
-                    mtlUrl.value = URL.createObjectURL(mtlFile.value.raw);
-                    mtlUrl.value = mtlUrl.value.slice(5);
-                    objShow.value = true;
-                }, 1500);
+                const response = await getPreview(
+                    objFile.value,
+                    mtlFile.value,
+                );
+                objUrl.value = `http://127.0.0.1:5000${response.data.objFile}`;
+                mtlUrl.value = `http://127.0.0.1:5000/${response.data.mtlFile}`;
+                objShow.value = true;
 
                 componentKey.value += 1;
 
@@ -405,15 +399,16 @@ const generateObj = async () => {
     );
 
     // 3. 动态加载模型，这两个是包含周边建筑的模型文件
-    objUrl.value = `http://127.0.0.1:5000${response.data.objFile}`;
-    mtlUrl.value = `http://127.0.0.1:5000/${response.data.mtlFile}`;
-    tabsShow.value = true;
+    genObjUrl.value = `http://127.0.0.1:5000${response.data.objFile}`;
+    genMtlUrl.value = `http://127.0.0.1:5000/${response.data.mtlFile}`;
+    objUrl.value = genObjUrl.value;
+    mtlUrl.value = genMtlUrl.value;
     loader.value = false;
     plotRatio.value = response.data.plotRatio;
     containRate.value = true;
     //TODO 切换到不显示周边建筑：注意这里不加载mtl文件，需要修改前面的vue代码
     //这个是读取文件：
-    sigUrl.value = `http://127.0.0.1:5000/${response.data.sigFile}`;
+    genSigUrl.value = `http://127.0.0.1:5000/${response.data.sigFile}`;
 
     // 4. 强制重新渲染组件（如果需要）
     componentKey.value += 1;
@@ -536,7 +531,7 @@ onMounted(() => {
 }
 
 .renderButton {
-    margin-top: 1.3%;
+    margin-top: 2.6%;
     margin-right: 19%;
     width: 8%;
     font-size: 15px;
@@ -546,7 +541,7 @@ onMounted(() => {
 }
 
 .outputButton {
-    margin-top: 1.3%;
+    margin-top: 2.6%;
     margin-right: 10%;
     width: 8%;
     font-size: 15px;
@@ -556,7 +551,7 @@ onMounted(() => {
 }
 
 .nextButton {
-    margin-top: 1.3%;
+    margin-top: 2.6%;
     margin-right: 1%;
     width: 8%;
     font-size: 15px;
