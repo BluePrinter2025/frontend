@@ -51,7 +51,7 @@
                                 <el-text class="mx-1">间距系数</el-text>
                             </el-col>
                             <el-col :span="12">
-                                <a-input-number v-model:value="spreadRatio" :min="0" :max="50" style="width:100%;" />
+                                <a-input-number v-model:value="spreadRatio" :min="0.0001" style="width:100%;" />
                             </el-col>
                         </el-row>
                         <el-row style="margin-top:4%;">
@@ -68,7 +68,7 @@
                                 <el-text class="mx-1">建筑间距</el-text>
                             </el-col>
                             <el-col :span="12">
-                                <a-input-number v-model:value="buildingInterval" :min="0" style="width:100%;"
+                                <a-input-number v-model:value="buildingInterval" :min="0.0001" style="width:100%;"
                                     addon-after="m" />
                             </el-col>
                         </el-row>
@@ -77,7 +77,7 @@
                                 <el-text class="mx-1">单体标准层面积</el-text>
                             </el-col>
                             <el-col :span="12">
-                                <a-input-number v-model:value="standardArea" :min="0" style="width:100%;"
+                                <a-input-number v-model:value="standardArea" :min="0.1" style="width:100%;"
                                     addon-after="m²" />
                             </el-col>
                         </el-row>
@@ -86,7 +86,7 @@
                                 <el-text class="mx-1">最高高度</el-text>
                             </el-col>
                             <el-col :span="12">
-                                <a-input-number v-model:value="maxHeight" :min="0" style="width:100%;"
+                                <a-input-number v-model:value="maxHeight" :min="0.1" style="width:100%;"
                                     addon-after="m" />
                             </el-col>
                         </el-row>
@@ -95,7 +95,7 @@
                                 <el-text class="mx-1">最高层数</el-text>
                             </el-col>
                             <el-col :span="12">
-                                <a-input-number v-model:value="maxFloor" :min="0" :max="10" style="width:100%;" />
+                                <a-input-number v-model:value="maxFloor" :min="1" style="width:100%;" />
                             </el-col>
                         </el-row>
                         <el-row style="margin-top:4%;">
@@ -103,7 +103,7 @@
                                 <el-text class="mx-1">首层层高</el-text>
                             </el-col>
                             <el-col :span="12">
-                                <a-input-number v-model:value="firstFloor" :min="0" style="width:100%;"
+                                <a-input-number v-model:value="firstFloor" :min="0.1" style="width:100%;"
                                     addon-after="m" />
                             </el-col>
                         </el-row>
@@ -112,7 +112,7 @@
                                 <el-text class="mx-1">标准层高</el-text>
                             </el-col>
                             <el-col :span="12">
-                                <a-input-number v-model:value="standardFloor" :min="0" style="width:100%;"
+                                <a-input-number v-model:value="standardFloor" :min="0.1" style="width:100%;"
                                     addon-after="m" />
                             </el-col>
                         </el-row>
@@ -166,7 +166,7 @@
                 </el-col>
                 <el-col v-else>
                     <el-row>
-                        <el-text size="large" v-if="containRate" style=" margin-top: 2.6%;position: absolute;"
+                        <el-text size="large" v-if="containRate" style=" margin-top: 2.8%;position: absolute;"
                             class="containtext">容积率:{{ plotRatio }}</el-text>
                     </el-row>
                     <el-row>
@@ -177,7 +177,7 @@
                     </el-row>
                     <el-row>
                         <el-button type="primary" plain @click="dialogVisible = true"
-                            class="nextButton">保存方案</el-button>
+                            class="nextButton">保存</el-button>
                     </el-row>
                 </el-col>
             </el-main>
@@ -233,15 +233,15 @@ const fileList = ref<UploadUserFile[]>([]);
 const router = useRouter();
 const projectName = ref(null);
 const projectId = ref('');
-const winterSolstice = ref(0);  //冬至日
-const spreadRatio = ref(0);    //间距系数
-const remoteDistance = ref(0);
-const buildingInterval = ref(0);
-const standardArea = ref(0);
-const maxHeight = ref(0);
-const maxFloor = ref(0);
-const firstFloor = ref(0);
-const standardFloor = ref(0);
+const winterSolstice = ref(2.5);  //冬至日
+const spreadRatio = ref(0.5);    //间距系数
+const remoteDistance = ref(5);  //退线距离
+const buildingInterval = ref(5);
+const standardArea = ref(2500);
+const maxHeight = ref(100);
+const maxFloor = ref(25);
+const firstFloor = ref(3.9);
+const standardFloor = ref(3.4);
 const objFile = ref(null);
 const mtlFile = ref(null);
 const render = ref(false);
@@ -257,7 +257,7 @@ const lights = ref();
 const componentKey = ref(0);
 const threeScene = ref(null);
 const containRate = ref(false);
-const measuringScale = ref(0);
+const measuringScale = ref(100);
 const plotRatio = ref(0);
 const objShow = ref(false);
 const sigUrl = ref(null);
@@ -542,7 +542,7 @@ onMounted(() => {
 .containtext {
     padding-top: 40px;
     margin-right: 10%;
-    width: 8%;
+    width: 18%;
     font-size: 17px;
     font-weight: bold;
     position: absolute;

@@ -34,8 +34,8 @@
       </el-main>
     </el-container>
   </el-container>
-  <el-dialog v-model="newProjectVisible" title="新建方案" width="500">
-    <el-input v-model="projectName" style="width: 460px;height:40px;" placeholder="方案名称" />
+  <el-dialog v-model="newProjectVisible" title="新建项目" width="500">
+    <el-input v-model="projectName" style="width: 460px;height:40px;" placeholder="项目名称" />
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="newProjectVisible = false">取消</el-button>
