@@ -140,12 +140,12 @@
                 <!-- obj预览 -->
                 <div style="width: 100%;height: calc(100% - 40px);" ref="captureArea">
                     <el-button type="info" plain style="margin-top:-10px;margin-bottom:5px;" @click="exchange">{{
-                button_text
-            }}</el-button>
-                    <vue3dLoader v-show="objShow" :filePath="objUrl" :mtlPath="mtlUrl" class="scene-container"
+                        button_text
+                        }}</el-button>
+                    <vue3dLoader v-if="objShow" :filePath="objUrl" :mtlPath="mtlUrl" class="scene-container"
                         :crossOrigin="'anonymous'" id="btn1" :lights="lights" :key="componentKey" ref="threeScene"
                         :renderer-options="{ preserveDrawingBuffer: true }" @init="onSceneInit" />
-                    <div v-show="loader"
+                    <div v-if="loader" :key="loaderKey"
                         style="width:100%;height:100%;display: flex;justify-content: center;align-items: center;">
                         <svg class="pl" width="240" height="240" viewBox="0 0 240 240">
                             <circle class="pl__ring pl__ring--a" cx="120" cy="120" r="105" fill="none" stroke="#000"
@@ -265,6 +265,7 @@ const isSig = ref(false);
 const genObjUrl = ref('');
 const genMtlUrl = ref('');
 const genSigUrl = ref('');
+const loaderKey=ref(1);
 const button_text = ref('仅显示生成部分');
 const exchange = () => {
     if (button_text.value === '仅显示生成部分') {
@@ -361,15 +362,15 @@ const handleFileChange = async (file: UploadUserFile, files: UploadUserFile[]) =
 
     if (objCount === 1 && mtlCount === 1) {
         objFile.value = files.find(f => f.name.endsWith('.obj'));
-        // console.log(objFile.value.raw);
+        console.log(objFile.value.raw);
         mtlFile.value = files.find(f => f.name.endsWith('.mtl'));
         try {
             try {
 
 
                 const response = await getPreview(
-                    objFile.value,
-                    mtlFile.value,
+                    objFile.value.raw,
+                    mtlFile.value.raw,
                 );
                 objUrl.value = `http://127.0.0.1:5000${response.data.objFile}`;
                 mtlUrl.value = `http://127.0.0.1:5000/${response.data.mtlFile}`;
@@ -393,8 +394,10 @@ const handleExceed = (files, fileList) => {
 
 
 const generateObj = async () => {
+    console.log('test!');
     objShow.value = false;
     loader.value = true;
+    loaderKey.value+=1;
     const response = await generateObject(
         winterSolstice.value,
         spreadRatio.value,
@@ -405,8 +408,8 @@ const generateObj = async () => {
         maxFloor.value,
         firstFloor.value,
         standardFloor.value,
-        objFile.value,
-        mtlFile.value,
+        objFile.value.raw,
+        mtlFile.value.raw,
         projectId.value,
         measuringScale.value,
     );
