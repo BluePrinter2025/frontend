@@ -121,7 +121,7 @@
                                 <el-text class="mx-1">比例尺</el-text>
                             </el-col>
                             <el-col :span="12">
-                                <a-input-number v-model:value="measuringScale" :min="0" style="width:100%;" />
+                                <a-input-number v-model:value="measuringScale" :min="1" style="width:100%;" />
                             </el-col>
                         </el-row>
                         <el-row style="margin-top:4%;">
@@ -396,7 +396,6 @@ const handleExceed = (files, fileList) => {
 
 
 const generateObj = async () => {
-    console.log('test!');
     objShow.value = false;
     loader.value = true;
     loaderKey.value+=1;
@@ -421,6 +420,7 @@ const generateObj = async () => {
     genMtlUrl.value = `http://127.0.0.1:5000/${response.data.mtlFile}`;
     objUrl.value = genObjUrl.value;
     mtlUrl.value = genMtlUrl.value;
+    objShow.value = true;
     loader.value = false;
     plotRatio.value = response.data.plotRatio;
     containRate.value = true;
