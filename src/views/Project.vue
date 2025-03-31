@@ -28,7 +28,17 @@
                                 </el-upload>
                             </el-col>
                         </el-row>
-                        <el-row>
+                        <el-row style="margin-top:4%;">
+                            <el-col :span="12">
+                                <el-text class="mx-1">地区</el-text>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-cascader :options="options" v-model="selectedOptions"
+                                    style="width:100%;margin-top:-3px;">
+                                </el-cascader>
+                            </el-col>
+                        </el-row>
+                        <el-row style="margin-top:4%;">
                             <el-col :span="12">
                                 <el-text class="mx-1">冬至日 日照时长</el-text>
                             </el-col>
@@ -206,6 +216,7 @@
     </el-dialog> -->
 </template>
 <script lang="ts" setup>
+import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
 import { ref, onMounted, watch, onUnmounted, nextTick } from 'vue';
 import html2canvas from 'html2canvas'
 import { useRouter } from "vue-router";
@@ -215,7 +226,9 @@ import { ElMessage } from "element-plus";
 import { generateObject, getPreview } from '../api/api';
 import { ElMessageBox, UploadUserFile } from 'element-plus';
 import type { ButtonInstance } from 'element-plus';
-const dialogVisible = ref(false)
+const dialogVisible = ref(false);
+const selectedOptions = ref([]);
+const options = regionData;
 const fileList = ref<UploadUserFile[]>([]);
 const router = useRouter();
 const projectName = ref(null);

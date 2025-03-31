@@ -45,7 +45,7 @@ export const getPreview = (objFile, mtlFile) => {
     const formData = new FormData();
     formData.append('objFile', objFile);
     formData.append('mtlFile', mtlFile);
-    return api.post(`/generateObj`, formData, {
+    return api.post(`/getPreview`, formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }
