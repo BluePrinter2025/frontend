@@ -166,7 +166,7 @@
                 </el-col>
                 <el-col v-else>
                     <el-row>
-                        <el-text size="large" v-if="containRate" style=" margin-top: 1.3%;position: absolute;"
+                        <el-text size="large" v-if="containRate" style=" margin-top: 2.6%;position: absolute;"
                             class="containtext">容积率:{{ plotRatio }}</el-text>
                     </el-row>
                     <el-row>
@@ -271,6 +271,7 @@ const exchange = () => {
     if (button_text.value === '仅显示生成部分') {
         button_text.value = '显示全部';
         objUrl.value = genSigUrl.value;
+        mtlUrl.value=undefined;
     } else {
         button_text.value = '仅显示生成部分';
         objUrl.value = genObjUrl.value;
